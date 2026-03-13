@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>五维画布共创 - 提交讨论</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --bg-dark: #0A0A0A;
+      --bg-card: #141414;
+      --bg-input: #1A1A1A;
+      --text-primary: #FFFFFF;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-tertiary: rgba(255, 255, 255, 0.5);
+      --accent-color: rgba(255, 255, 255, 0.9);
+      --accent-light: rgba(255, 255, 255, 0.1);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --font-main: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      font-family: var(--font-main);
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 24px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 32px;
+      color: var(--text-primary);
+    }
+    
+    .step {
+      background: var(--bg-card);
+      padding: 24px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .step.hidden {
+      display: none;
+    }
+    
+    .step-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .form-select {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-family: var(--font-main);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+    
+    .group-selector {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .group-btn {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-family: var(--font-main);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .group-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      color: var(--text-primary);
+    }
+    
+    .nav-btn {
+      width: 100%;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font-main);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-btn:disabled {
+      background: rgba(255, 255, 255, 0.05);
+      cursor: not-allowed;
+    }
+    
+    .nav-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .user-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .user-info .company {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .user-info .group-badge {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .progress-bar {
+      height: 4px;
+      background: var(--bg-input);
+      margin-bottom: 8px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.6);
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-tertiary);
+      margin-bottom: 24px;
+    }
+    
+    .layer-form {
+      margin-bottom: 24px;
+    }
+    
+    .layer-form-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    
+    .layer-form-question {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .option-btn {
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-main);
+    }
+    
+    .option-btn.selected {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .option-btn .title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: block;
+    }
+    
+    .option-btn .desc {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+    
+    .note-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      font-size: 14px;
+      font-family: var(--font-main);
+      color: var(--text-primary);
+      resize: none;
+      min-height: 80px;
+    }
+    
+    .note-input::placeholder {
+      color: var(--text-tertiary);
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .nav-buttons .nav-btn {
+      flex: 1;
+    }
+    
+    .nav-buttons .nav-btn.secondary {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+    
+    .success-icon {
+      font-size: 64px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    
+    .success-title {
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    
+    .success-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧩 五维画布共创</h1>
+    
+    <!-- 第一步：选择公司和组别 -->
+    <div class="step" id="step-info">
+      <div class="step-title">请选择你的公司和所在组别</div>
+      
+      <div class="form-group">
+        <label>你的公司</label>
+        <select class="form-select" id="company-select">
+          <option value="">请选择公司</option>
+          <option value="云快充">云快充</option>
+          <option value="博云科技">博云科技</option>
+          <option value="零一汽车">零一汽车</option>
+          <option value="苏度科技">苏度科技</option>
+          <option value="XREAL">XREAL</option>
+          <option value="灵猴机器人">灵猴机器人</option>
+          <option value="恩井智控">恩井智控</option>
+          <option value="图达通">图达通</option>
+          <option value="车小多">车小多</option>
+          <option value="主线科技">主线科技</option>
+          <option value="能链控股">能链控股</option>
+          <option value="车林子">车林子</option>
+          <option value="海微科技">海微科技</option>
+          <option value="思特光学">思特光学</option>
+          <option value="蔚来资本">蔚来资本</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>你的组别</label>
+        <div class="group-selector">
+          <button class="group-btn" data-group="group1">第一组</button>
+          <button class="group-btn" data-group="group2">第二组</button>
+          <button class="group-btn" data-group="online">线上组</button>
+        </div>
+      </div>
+      
+      <button class="nav-btn" id="start-btn" disabled>开始填写</button>
+    </div>
+
+    <!-- 第二步：填写内容 -->
+    <div class="step hidden" id="step-content">
+      <div class="user-info">
+        <span class="company" id="display-company"></span>
+        <span class="group-badge" id="display-group"></span>
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text"><span id="current-layer">1</span> / 5</div>
+
+      <!-- 动态内容区域 -->
+      <div id="layer-content"></div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn secondary" id="prev-layer-btn">上一题</button>
+        <button class="nav-btn" id="next-layer-btn">下一题</button>
+      </div>
+    </div>
+
+    <!-- 第三步：提交成功 -->
+    <div class="step hidden" id="step-success">
+      <div class="success-icon">✅</div>
+      <div class="success-title">提交成功！</div>
+      <div class="success-desc">感谢你的参与，大屏已实时更新</div>
+      <button class="nav-btn" onclick="resetForm()">继续提交</button>
+    </div>
+  </div>
+
+  <script>
+    // 五维画布数据
+    const layersData = [
+      {
+        id: 'strategy',
+        title: '战略选择层',
+        question: '我们要用AI解决什么级别的生存问题？',
+        options: [
+          { id: 'cost', title: '成本优化', desc: '(活下去)' },
+          { id: 'efficiency', title: '效率提升', desc: '(跑更快)' },
+          { id: 'innovation', title: '模式创新', desc: '(换赛道)' }
+        ]
+      },
+      {
+        id: 'org',
+        title: '组织进化层',
+        question: '我们的"人+AI"作战单元怎么设计？',
+        options: [
+          { id: 'role', title: '岗位重构', desc: '(谁+AI干活)' },
+          { id: 'process', title: '流程再造', desc: '(AI管什么)' },
+          { id: 'decision', title: '决策上移', desc: '(人做什么)' }
+        ]
+      },
+      {
+        id: 'culture',
+        title: '文化土壤层',
+        question: '怎么让员工从"怕AI"变成"用AI"？',
+        options: [
+          { id: 'fear', title: '恐惧消除', desc: '(安全感)' },
+          { id: 'capability', title: '能力重塑', desc: '(培训体系)' },
+          { id: 'incentive', title: '激励机制', desc: '(AI绩效)' }
+        ]
+      },
+      {
+        id: 'tech',
+        title: '技术底座层',
+        question: '我们的AI基建是自建、采购还是混合？',
+        options: [
+          { id: 'private', title: '私有化部署', desc: '(安全优先)' },
+          { id: 'saas', title: 'SaaS工具', desc: '(速度优先)' },
+          { id: 'hybrid', title: '混合架构', desc: '(平衡方案)' }
+        ]
+      },
+      {
+        id: 'risk',
+        title: '风险对冲层',
+        question: 'AI翻车的时候，我们怎么兜底？',
+        options: [
+          { id: 'review', title: '人机复核', desc: '(关键节点)' },
+          { id: 'circuit', title: '熔断机制', desc: '(异常阈值)' },
+          { id: 'fallback', title: '回退方案', desc: '(Plan B)' }
+        ]
+      }
+    ];
+
+    // 状态
+    let selectedCompany = '';
+    let selectedGroup = '';
+    let currentLayerIndex = 0;
+    let answers = {};
+
+    // DOM 元素
+    const companySelect = document.getElementById('company-select');
+    const groupBtns = document.querySelectorAll('.group-btn');
+    const startBtn = document.getElementById('start-btn');
+    const stepInfo = document.getElementById('step-info');
+    const stepContent = document.getElementById('step-content');
+    const stepSuccess = document.getElementById('step-success');
+    const progressFill = document.getElementById('progress-fill');
+    const currentLayerEl = document.getElementById('current-layer');
+    const layerContent = document.getElementById('layer-content');
+    const prevLayerBtn = document.getElementById('prev-layer-btn');
+    const nextLayerBtn = document.getElementById('next-layer-btn');
+
+    // 初始化
+    function init() {
+      companySelect.addEventListener('change', () => {
+        selectedCompany = companySelect.value;
+        updateStartBtn();
+      });
+
+      groupBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          groupBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedGroup = btn.dataset.group;
+          updateStartBtn();
+        });
+      });
+
+      startBtn.addEventListener('click', startSubmit);
+      prevLayerBtn.addEventListener('click', prevLayer);
+      nextLayerBtn.addEventListener('click', nextLayer);
+    }
+
+    function updateStartBtn() {
+      startBtn.disabled = !(selectedCompany && selectedGroup);
+    }
+
+    function startSubmit() {
+      document.getElementById('display-company').textContent = selectedCompany;
+      document.getElementById('display-group').textContent = 
+        selectedGroup === 'group1' ? '第一组' : 
+        selectedGroup === 'group2' ? '第二组' : '线上组';
+      
+      stepInfo.classList.add('hidden');
+      stepContent.classList.remove('hidden');
+      
+      currentLayerIndex = 0;
+      answers = {};
+      renderLayer();
+    }
+
+    function renderLayer() {
+      const layer = layersData[currentLayerIndex];
+      
+      // 更新进度
+      progressFill.style.width = `${((currentLayerIndex + 1) / 5) * 100}%`;
+      currentLayerEl.textContent = currentLayerIndex + 1;
+      
+      // 渲染内容
+      layerContent.innerHTML = `
+        <div class="layer-form">
+          <div class="layer-form-title">${layer.title}</div>
+          <div class="layer-form-question">${layer.question}</div>
+          <div class="option-group">
+            ${layer.options.map(opt => `
+              <button class="option-btn ${answers[layer.id]?.vote === opt.id ? 'selected' : ''}" 
+                      data-option="${opt.id}">
+                <span class="title">${opt.title}</span>
+                <span class="desc">${opt.desc}</span>
+              </button>
+            `).join('')}
+          </div>
+          <textarea class="note-input" placeholder="补充说明（选填）">${answers[layer.id]?.note || ''}</textarea>
+        </div>
+      `;
+      
+      // 绑定选项点击
+      layerContent.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          layerContent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          answers[layer.id] = answers[layer.id] || {};
+          answers[layer.id].vote = btn.dataset.option;
+        });
+      });
+      
+      // 绑定输入
+      layerContent.querySelector('.note-input').addEventListener('input', (e) => {
+        answers[layer.id] = answers[layer.id] || {};
+        answers[layer.id].note = e.target.value;
+      });
+      
+      // 更新按钮
+      prevLayerBtn.style.visibility = currentLayerIndex === 0 ? 'hidden' : 'visible';
+      nextLayerBtn.textContent = currentLayerIndex === 4 ? '提交' : '下一题';
+    }
+
+    function prevLayer() {
+      if (currentLayerIndex > 0) {
+        currentLayerIndex--;
+        renderLayer();
+      }
+    }
+
+    function nextLayer() {
+      // 检查当前层是否已选择
+      const layer = layersData[currentLayerIndex];
+      if (!answers[layer.id]?.vote) {
+        alert('请选择一个选项');
+        return;
+      }
+      
+      if (currentLayerIndex < 4) {
+        currentLayerIndex++;
+        renderLayer();
+      } else {
+        submitForm();
+      }
+    }
+
+    function submitForm() {
+      const submission = {
+        company: selectedCompany,
+        group: selectedGroup,
+        layers: answers,
+        timestamp: Date.now()
+      };
+      
+      // 保存到 localStorage
+      let submissions = JSON.parse(localStorage.getItem('nc-canvas-submissions') || '[]');
+      submissions.push(submission);
+      localStorage.setItem('nc-canvas-submissions', JSON.stringify(submissions));
+      
+      // 通过 BroadcastChannel 通知大屏
+      if (typeof BroadcastChannel !== 'undefined') {
+        const channel = new BroadcastChannel('nc-canvas-channel');
+        channel.postMessage({ type: 'new-submission', data: submission });
+      }
+      
+      // 显示成功
+      stepContent.classList.add('hidden');
+      stepSuccess.classList.remove('hidden');
+    }
+
+    function resetForm() {
+      selectedCompany = '';
+      selectedGroup = '';
+      currentLayerIndex = 0;
+      answers = {};
+      
+      companySelect.value = '';
+      groupBtns.forEach(b => b.classList.remove('active'));
+      startBtn.disabled = true;
+      
+      stepSuccess.classList.add('hidden');
+      stepInfo.classList.remove('hidden');
+    }
+
+    // 启动
+    init();
+  </script>
+</body>
+</html>

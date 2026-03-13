@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五维画布共创 - 大屏展示</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="display-page">
+  <div class="header">
+    <h1>AI原生组织五维画布</h1>
+    <div class="group-tabs">
+      <button class="group-tab active" data-group="all">全部</button>
+      <button class="group-tab" data-group="group1">第一组</button>
+      <button class="group-tab" data-group="group2">第二组</button>
+      <button class="group-tab" data-group="online">线上组</button>
+    </div>
+  </div>
+
+  <div class="canvas-container">
+    <!-- 第一层：战略选择 -->
+    <div class="layer" data-layer="strategy">
+      <div class="layer-header">
+        <span class="layer-icon">🎯</span>
+        <span class="layer-title">战略选择层</span>
+        <span class="layer-question">我们要用AI解决什么级别的生存问题？</span>
+      </div>
+      <div class="layer-options">
+        <div class="option" data-option="cost">
+          <span class="option-title">成本优化</span>
+          <span class="option-desc">(活下去)</span>
+          <div class="option-votes" id="strategy-cost"></div>
+        </div>
+        <div class="option" data-option="efficiency">
+          <span class="option-title">效率提升</span>
+          <span class="option-desc">(跑更快)</span>
+          <div class="option-votes" id="strategy-efficiency"></div>
+        </div>
+        <div class="option" data-option="innovation">
+          <span class="option-title">模式创新</span>
+          <span class="option-desc">(换赛道)</span>
+          <div class="option-votes" id="strategy-innovation"></div>
+        </div>
+      </div>
+      <div class="layer-discussion">
+        <h4>讨论要点</h4>
+        <div class="discussion-list" id="strategy-discussion"></div>
+      </div>
+    </div>
+
+    <!-- 第二层：组织进化 -->
+    <div class="layer" data-layer="org">
+      <div class="layer-header">
+        <span class="layer-icon">👥</span>
+        <span class="layer-title">组织进化层</span>
+        <span class="layer-question">我们的"人+AI"作战单元怎么设计？</span>
+      </div>
+      <div class="layer-options">
+        <div class="option" data-option="role">
+          <span class="option-title">岗位重构</span>
+          <span class="option-desc">(谁+AI干活)</span>
+          <div class="option-votes" id="org-role"></div>
+        </div>
+        <div class="option" data-option="process">
+          <span class="option-title">流程再造</span>
+          <span class="option-desc">(AI管什么)</span>
+          <div class="option-votes" id="org-process"></div>
+        </div>
+        <div class="option" data-option="decision">
+          <span class="option-title">决策上移</span>
+          <span class="option-desc">(人做什么)</span>
+          <div class="option-votes" id="org-decision"></div>
+        </div>
+      </div>
+      <div class="layer-discussion">
+        <h4>讨论要点</h4>
+        <div class="discussion-list" id="org-discussion"></div>
+      </div>
+    </div>
+
+    <!-- 第三层：文化土壤 -->
+    <div class="layer" data-layer="culture">
+      <div class="layer-header">
+        <span class="layer-icon">🌱</span>
+        <span class="layer-title">文化土壤层</span>
+        <span class="layer-question">怎么让员工从"怕AI"变成"用AI"？</span>
+      </div>
+      <div class="layer-options">
+        <div class="option" data-option="fear">
+          <span class="option-title">恐惧消除</span>
+          <span class="option-desc">(安全感)</span>
+          <div class="option-votes" id="culture-fear"></div>
+        </div>
+        <div class="option" data-option="capability">
+          <span class="option-title">能力重塑</span>
+          <span class="option-desc">(培训体系)</span>
+          <div class="option-votes" id="culture-capability"></div>
+        </div>
+        <div class="option" data-option="incentive">
+          <span class="option-title">激励机制</span>
+          <span class="option-desc">(AI绩效)</span>
+          <div class="option-votes" id="culture-incentive"></div>
+        </div>
+      </div>
+      <div class="layer-discussion">
+        <h4>讨论要点</h4>
+        <div class="discussion-list" id="culture-discussion"></div>
+      </div>
+    </div>
+
+    <!-- 第四层：技术底座 -->
+    <div class="layer" data-layer="tech">
+      <div class="layer-header">
+        <span class="layer-icon">🔧</span>
+        <span class="layer-title">技术底座层</span>
+        <span class="layer-question">我们的AI基建是自建、采购还是混合？</span>
+      </div>
+      <div class="layer-options">
+        <div class="option" data-option="private">
+          <span class="option-title">私有化部署</span>
+          <span class="option-desc">(安全优先)</span>
+          <div class="option-votes" id="tech-private"></div>
+        </div>
+        <div class="option" data-option="saas">
+          <span class="option-title">SaaS工具</span>
+          <span class="option-desc">(速度优先)</span>
+          <div class="option-votes" id="tech-saas"></div>
+        </div>
+        <div class="option" data-option="hybrid">
+          <span class="option-title">混合架构</span>
+          <span class="option-desc">(平衡方案)</span>
+          <div class="option-votes" id="tech-hybrid"></div>
+        </div>
+      </div>
+      <div class="layer-discussion">
+        <h4>讨论要点</h4>
+        <div class="discussion-list" id="tech-discussion"></div>
+      </div>
+    </div>
+
+    <!-- 第五层：风险对冲 -->
+    <div class="layer" data-layer="risk">
+      <div class="layer-header">
+        <span class="layer-icon">🛡️</span>
+        <span class="layer-title">风险对冲层</span>
+        <span class="layer-question">AI翻车的时候，我们怎么兜底？</span>
+      </div>
+      <div class="layer-options">
+        <div class="option" data-option="review">
+          <span class="option-title">人机复核</span>
+          <span class="option-desc">(关键节点)</span>
+          <div class="option-votes" id="risk-review"></div>
+        </div>
+        <div class="option" data-option="circuit">
+          <span class="option-title">熔断机制</span>
+          <span class="option-desc">(异常阈值)</span>
+          <div class="option-votes" id="risk-circuit"></div>
+        </div>
+        <div class="option" data-option="fallback">
+          <span class="option-title">回退方案</span>
+          <span class="option-desc">(Plan B)</span>
+          <div class="option-votes" id="risk-fallback"></div>
+        </div>
+      </div>
+      <div class="layer-discussion">
+        <h4>讨论要点</h4>
+        <div class="discussion-list" id="risk-discussion"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 实时统计 -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-label">已提交</span>
+      <span class="stat-value" id="submit-count">0</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">第一组</span>
+      <span class="stat-value" id="group1-count">0</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">第二组</span>
+      <span class="stat-value" id="group2-count">0</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">线上组</span>
+      <span class="stat-value" id="online-count">0</span>
+    </div>
+  </div>
+
+  <!-- 二维码入口提示 -->
+  <div class="qr-hint">
+    <p>📱 扫码参与讨论</p>
+    <img id="qr-image" class="qr-image" src="" alt="二维码">
+    <p class="qr-url" id="submit-url"></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

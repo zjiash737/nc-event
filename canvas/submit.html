@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五维画布共创 - 提交讨论</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="submit-page">
+  <div class="submit-container">
+    <h1>🧩 五维画布共创</h1>
+    
+    <!-- 第一步：选择公司和组别 -->
+    <div class="step" id="step-info">
+      <h2>请选择你的公司和所在组别</h2>
+      
+      <div class="form-group">
+        <label>你的公司</label>
+        <select class="form-select" id="company-select">
+          <option value="">请选择公司</option>
+          <option value="云快充">云快充</option>
+          <option value="博云科技">博云科技</option>
+          <option value="零一汽车">零一汽车</option>
+          <option value="苏度科技">苏度科技</option>
+          <option value="XREAL">XREAL</option>
+          <option value="灵猴机器人">灵猴机器人</option>
+          <option value="恩井智控">恩井智控</option>
+          <option value="图达通">图达通</option>
+          <option value="车小多">车小多</option>
+          <option value="主线">主线</option>
+          <option value="能链">能链</option>
+          <option value="车林子">车林子</option>
+          <option value="海微">海微</option>
+          <option value="思特光学">思特光学</option>
+          <option value="蔚来资本">蔚来资本</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>你的组别</label>
+        <div class="group-selector-inline">
+          <button class="group-btn-inline" data-group="group1">第一组</button>
+          <button class="group-btn-inline" data-group="group2">第二组</button>
+          <button class="group-btn-inline" data-group="online">线上组</button>
+        </div>
+      </div>
+      
+      <button class="nav-btn primary full-width" id="start-btn" onclick="startSubmit()" disabled>开始填写</button>
+    </div>
+
+    <!-- 第二步：填写内容 -->
+    <div class="step hidden" id="step-content">
+      <div class="user-info">
+        <span id="display-company"></span>
+        <span class="group-badge" id="display-group"></span>
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text"><span id="current-layer">1</span> / 5</div>
+
+      <!-- 动态内容区域 -->
+      <div id="layer-content"></div>
+
+      <div class="nav-buttons">
+        <button class="nav-btn" id="prev-layer-btn" onclick="prevLayer()">上一题</button>
+        <button class="nav-btn primary" id="next-layer-btn" onclick="nextLayer()">下一题</button>
+      </div>
+    </div>
+
+    <!-- 第三步：提交成功 -->
+    <div class="step hidden" id="step-success">
+      <div class="success-icon">✅</div>
+      <h2>提交成功！</h2>
+      <p>感谢你的参与，大屏已实时更新</p>
+      <button class="nav-btn primary" onclick="resetForm()">继续提交</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="submit.js"></script>
+</body>
+</html>

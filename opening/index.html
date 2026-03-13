@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI+组织 CEO闭门交流会</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 场景1: 标题 -->
+  <section id="scene-title" class="scene active">
+    <div class="center-content">
+      <h1 class="main-title">AI + 组织</h1>
+      <p class="sub-title">CEO闭门交流会</p>
+      <p class="date">2026.03.15</p>
+    </div>
+  </section>
+
+  <!-- 场景2: 5个真相数字 -->
+  <section id="scene-numbers" class="scene">
+    <div class="numbers-container">
+      <div class="number-card" data-delay="0">
+        <div class="number">100% <span class="vs">vs</span> 0%</div>
+        <div class="truth">全员认同AI，但0家跑通原生化</div>
+      </div>
+      <div class="number-card" data-delay="1">
+        <div class="number">86%</div>
+        <div class="truth">因数据安全不敢进核心业务</div>
+      </div>
+      <div class="number-card" data-delay="2">
+        <div class="number">66%</div>
+        <div class="truth">最想优化编制（1人+多AI）</div>
+      </div>
+      <div class="number-card" data-delay="3">
+        <div class="number">60%</div>
+        <div class="truth">卡在员工抵触和缺人才</div>
+      </div>
+      <div class="number-card" data-delay="4">
+        <div class="number">80%</div>
+        <div class="truth">只要有ROI，成本不是问题</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 场景3: 金句 -->
+  <section id="scene-quote" class="scene">
+    <div class="center-content">
+      <blockquote class="quote">
+        "各位，这就是我们今天聚在这里的原因。<br>
+        我们100%相信AI，但86%的人因为安全不敢动。<br>
+        <span class="highlight">今天不解决这些刹车片，我们永远停留在PPT上。"</span>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- 场景4: 物种标签 -->
+  <section id="scene-species" class="scene">
+    <div class="species-container">
+      <h2 class="section-title">你的企业是哪种"物种"？</h2>
+      <div class="species-grid">
+        <div class="species-card blue">
+          <div class="species-icon">🦖</div>
+          <div class="species-name">恐龙型</div>
+          <div class="species-percent">40%</div>
+          <div class="species-desc">只有个别员工在偷摸用</div>
+        </div>
+        <div class="species-card red">
+          <div class="species-icon">🐙</div>
+          <div class="species-name">章鱼型</div>
+          <div class="species-percent">47%</div>
+          <div class="species-desc">多点开花，各部门各扫门前雪</div>
+        </div>
+        <div class="species-card yellow">
+          <div class="species-icon">🐝</div>
+          <div class="species-name">蜂群型</div>
+          <div class="species-percent">13%</div>
+          <div class="species-desc">系统化，开始建立标准 Workflow</div>
+        </div>
+        <div class="species-card green">
+          <div class="species-icon">🧬</div>
+          <div class="species-name">智人型</div>
+          <div class="species-percent">0%</div>
+          <div class="species-desc">AI原生，AI已是组织的数字神经</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 场景5: 参会企业 -->
+  <section id="scene-companies" class="scene">
+    <div class="companies-container">
+      <h2 class="section-title">今日参会企业</h2>
+      <div class="location-group">
+        <h3 class="location-title">📍 上海（线下）</h3>
+        <div class="companies-grid" id="shanghai-companies"></div>
+      </div>
+      <div class="location-group">
+        <h3 class="location-title">🖥️ 北京（线上）</h3>
+        <div class="companies-grid" id="beijing-companies"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 导航控制 -->
+  <div class="nav-controls">
+    <button id="prevBtn" class="nav-btn">← 上一页</button>
+    <div class="scene-indicator">
+      <span id="currentScene">1</span> / <span id="totalScenes">5</span>
+    </div>
+    <button id="nextBtn" class="nav-btn">下一页 →</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
