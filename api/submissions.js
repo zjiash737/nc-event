@@ -44,19 +44,21 @@ export default async function handler(req, res) {
     const token = await getAccessToken();
     const records = await getRecords(token);
     
-    // 转换数据格式
-    const submissions = records.map(record => ({
-      id: record.record_id,
-      company: record.fields['公司'],
-      group: record.fields['分组'],
-      layers: {
-        strategy: { vote: record.fields['战略选择'], note: record.fields['战略讨论'] },
-        org: { vote: record.fields['组织进化'], note: record.fields['组织讨论'] },
-        culture: { vote: record.fields['文化土壤'], note: record.fields['文化讨论'] },
-        tech: { vote: record.fields['技术底座'], note: record.fields['技术讨论'] },
-        risk: { vote: record.fields['风险对冲'], note: record.fields['风险讨论'] }
-      }
-    }));
+    // 转换数据格式（过滤掉空记录）
+    const submissions = records
+      .filter(record => record.fields['公司'] && record.fields['分组'])
+      .map(record => ({
+        id: record.record_id,
+        company: record.fields['公司'],
+        group: record.fields['分组'],
+        layers: {
+          strategy: { vote: record.fields['战略选择'], note: record.fields['战略讨论'] },
+          org: { vote: record.fields['组织进化'], note: record.fields['组织讨论'] },
+          culture: { vote: record.fields['文化土壤'], note: record.fields['文化讨论'] },
+          tech: { vote: record.fields['技术底座'], note: record.fields['技术讨论'] },
+          risk: { vote: record.fields['风险对冲'], note: record.fields['风险讨论'] }
+        }
+      }));
     
     res.status(200).json({ success: true, data: submissions });
   } catch (error) {
