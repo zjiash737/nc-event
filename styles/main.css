@@ -527,14 +527,33 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding-bottom: 80px;
 }
 
 .canvas-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.canvas-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.canvas-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-shrink: 0;
+  padding-top: 10px;
 }
 
 .canvas-header h1 {
@@ -721,10 +740,7 @@ body {
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   margin-top: 20px;
-  position: absolute;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
+  flex-shrink: 0;
 }
 
 .stat-item {
@@ -747,15 +763,14 @@ body {
 
 /* 二维码 */
 .qr-section {
-  position: fixed;
-  bottom: 100px;
-  left: 30px;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
   padding: 16px 20px;
   border-radius: 16px;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  margin-top: 20px;
 }
 
 .qr-section p {
@@ -996,8 +1011,14 @@ body {
     bottom: 16px;
   }
   
+  .canvas-bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  
   .qr-section {
-    display: none;
+    margin-top: 0;
   }
   
   .canvas-stats {

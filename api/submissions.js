@@ -2,7 +2,7 @@
 // 获取多维表格数据
 
 const APP_ID = 'cli_a93e92c4ccb8dbdf';
-const APP_SECRET = 'on3bHmvthLQauzD62aibicDhElRdRcZj';
+const APP_SECRET = 'EYMmWDh97hfyJPuOF7OuxhsaVpsIMh72';
 const APP_TOKEN = 'OjVPbkXWYaCBaWszTiwcKB5en9c';
 const TABLE_ID = 'tblFRlmuaKx1isMh';
 
