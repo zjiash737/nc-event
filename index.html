@@ -469,40 +469,30 @@ class SceneManager {
     
     const layers = ['strategy', 'org', 'culture', 'tech', 'risk'];
     layers.forEach(layer => {
-      const votesByGroup = {};
+      const listEl = document.querySelector(`.canvas-layer[data-layer="${layer}"] .discussion-list`);
+      
+      // 遍历每个提交，显示公司名称标签
       filtered.forEach(sub => {
         const vote = sub.layers?.[layer]?.vote;
         if (vote) {
-          const key = `${vote}-${sub.group}`;
-          votesByGroup[key] = (votesByGroup[key] || 0) + 1;
-        }
-      });
-      
-      Object.entries(votesByGroup).forEach(([key, count]) => {
-        const [option, group] = key.split('-');
-        const votesEl = document.querySelector(`.canvas-layer[data-layer="${layer}"] .option[data-option="${option}"] .option-votes`);
-        if (votesEl) {
-          for (let i = 0; i < count; i++) {
+          const votesEl = document.querySelector(`.canvas-layer[data-layer="${layer}"] .option[data-option="${vote}"] .option-votes`);
+          if (votesEl) {
             const tag = document.createElement('span');
-            tag.className = `vote-tag ${group}`;
-            tag.textContent = '•';
+            tag.className = `vote-tag ${sub.group}`;
+            tag.textContent = sub.company;
             votesEl.appendChild(tag);
           }
         }
+        
+        // 渲染讨论要点
+        const note = sub.layers?.[layer]?.note;
+        if (note && listEl) {
+          const item = document.createElement('div');
+          item.className = 'discussion-item';
+          item.innerHTML = `<div class="company">${sub.company}</div><div>${note}</div>`;
+          listEl.appendChild(item);
+        }
       });
-      
-      const listEl = document.querySelector(`.canvas-layer[data-layer="${layer}"] .discussion-list`);
-      if (listEl) {
-        filtered.forEach(sub => {
-          const note = sub.layers?.[layer]?.note;
-          if (note) {
-            const item = document.createElement('div');
-            item.className = 'discussion-item';
-            item.innerHTML = `<div class="company">${sub.company}</div><div>${note}</div>`;
-            listEl.appendChild(item);
-          }
-        });
-      }
     });
   }
 }
