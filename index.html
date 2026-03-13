@@ -358,28 +358,34 @@
     <button id="nextBtn" class="nav-btn">下一页 →</button>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
 /* ========================================
    Main Event Page - Scene Manager
-   Version: 1.0.1
+   Version: 2.0.0 - Cross-device sync
    ======================================== */
+
+// Supabase 配置
+const SUPABASE_URL = 'https://cvehqlibhvreoyzkvmij.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhxbGliaHZyZW95emt2bWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTU0MzUsImV4cCI6MjA4ODk3MTQzNX0.7A4Y2NY4-PcFIUZARGmue-ufbM74BZn_mlugcMBCE2s';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 class SceneManager {
   constructor() {
     this.scenes = document.querySelectorAll('.scene');
     this.currentScene = 0;
     this.totalScenes = this.scenes.length;
-    this.broadcastChannel = null;
     this.submissions = [];
     
     this.init();
   }
   
-  init() {
+  async init() {
     this.updateNavButtons();
     this.bindEvents();
-    this.initBroadcastChannel();
-    this.loadSubmissions();
+    await this.loadSubmissions();
+    this.subscribeToChanges();
     this.showScene(0);
   }
   
@@ -444,35 +450,51 @@ class SceneManager {
   }
   
   // ========================================
-  // 五维画布功能
+  // 五维画布功能 - Supabase 版本
   // ========================================
   
-  initBroadcastChannel() {
-    if (typeof BroadcastChannel !== 'undefined') {
-      this.broadcastChannel = new BroadcastChannel('nc-canvas-channel');
-      this.broadcastChannel.onmessage = (event) => {
-        if (event.data.type === 'new-submission') {
-          this.addSubmission(event.data.data);
+  async loadSubmissions() {
+    try {
+      const { data, error } = await supabase
+        .from('submissions')
+        .select('*')
+        .order('created_at', { ascending: true });
+      
+      if (error) throw error;
+      
+      this.submissions = data.map(row => ({
+        id: row.id,
+        company: row.company,
+        group: row.group_name,
+        layers: row.layers,
+        timestamp: new Date(row.created_at).getTime()
+      }));
+    } catch (error) {
+      console.error('Load submissions error:', error);
+      this.submissions = [];
+    }
+  }
+  
+  subscribeToChanges() {
+    // 订阅实时更新
+    supabase
+      .channel('submissions-changes')
+      .on('postgres_changes', 
+        { event: 'INSERT', schema: 'public', table: 'submissions' },
+        (payload) => {
+          console.log('New submission:', payload);
+          const newData = {
+            id: payload.new.id,
+            company: payload.new.company,
+            group: payload.new.group_name,
+            layers: payload.new.layers,
+            timestamp: new Date(payload.new.created_at).getTime()
+          };
+          this.submissions.push(newData);
+          this.renderCanvas();
         }
-      };
-    }
-  }
-  
-  loadSubmissions() {
-    const stored = localStorage.getItem('nc-canvas-submissions');
-    if (stored) {
-      this.submissions = JSON.parse(stored);
-    }
-  }
-  
-  saveSubmissions() {
-    localStorage.setItem('nc-canvas-submissions', JSON.stringify(this.submissions));
-  }
-  
-  addSubmission(data) {
-    this.submissions.push(data);
-    this.saveSubmissions();
-    this.renderCanvas();
+      )
+      .subscribe();
   }
   
   filterByGroup(group) {

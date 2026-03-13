@@ -352,8 +352,13 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // 五维画布数据
+    // Supabase 配置
+    const SUPABASE_URL = 'https://cvehqlibhvreoyzkvmij.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhxbGliaHZyZW95emt2bWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTU0MzUsImV4cCI6MjA4ODk3MTQzNX0.7A4Y2NY4-PcFIUZARGmue-ufbM74BZn_mlugcMBCE2s';
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const layersData = [
       {
         id: 'strategy',
@@ -534,28 +539,28 @@
       }
     }
 
-    function submitForm() {
+    async function submitForm() {
       const submission = {
         company: selectedCompany,
-        group: selectedGroup,
-        layers: answers,
-        timestamp: Date.now()
+        group_name: selectedGroup,
+        layers: answers
       };
       
-      // 保存到 localStorage
-      let submissions = JSON.parse(localStorage.getItem('nc-canvas-submissions') || '[]');
-      submissions.push(submission);
-      localStorage.setItem('nc-canvas-submissions', JSON.stringify(submissions));
-      
-      // 通过 BroadcastChannel 通知大屏
-      if (typeof BroadcastChannel !== 'undefined') {
-        const channel = new BroadcastChannel('nc-canvas-channel');
-        channel.postMessage({ type: 'new-submission', data: submission });
+      try {
+        // 保存到 Supabase
+        const { data, error } = await supabase
+          .from('submissions')
+          .insert([submission]);
+        
+        if (error) throw error;
+        
+        // 显示成功
+        stepContent.classList.add('hidden');
+        stepSuccess.classList.remove('hidden');
+      } catch (error) {
+        console.error('Submit error:', error);
+        alert('提交失败，请重试');
       }
-      
-      // 显示成功
-      stepContent.classList.add('hidden');
-      stepSuccess.classList.remove('hidden');
     }
 
     function resetForm() {
