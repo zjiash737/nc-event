@@ -767,30 +767,28 @@ body {
 .canvas-stats {
   display: flex;
   justify-content: center;
-  gap: 40px;
+  align-items: center;
+  gap: 32px;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
-  padding: 12px 24px;
-  border-radius: 24px;
+  padding: 8px 20px;
+  border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  margin-top: 20px;
-  flex-shrink: 0;
 }
 
 .stat-item {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .stat-label {
-  display: block;
-  font-size: 11px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 4px;
 }
 
 .stat-value {
-  display: block;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
 }
