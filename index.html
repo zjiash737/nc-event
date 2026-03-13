@@ -440,13 +440,7 @@ class SceneManager {
       const res = await fetch(this.apiEndpoint);
       const data = await res.json();
       if (data.success) {
-        // 转换分组名称格式
-        this.submissions = data.data.map(item => ({
-          ...item,
-          group: item.group === '第一组' ? 'group1' : 
-                 item.group === '第二组' ? 'group2' : 
-                 item.group === '线上组' ? 'online' : item.group
-        }));
+        this.submissions = data.data;
         this.renderCanvas();
       }
     } catch (error) {
