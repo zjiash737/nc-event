@@ -776,18 +776,18 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.stat-item {
+.canvas-stats .stat-item {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.stat-label {
+.canvas-stats .stat-label {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.5);
 }
 
-.stat-value {
+.canvas-stats .stat-value {
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
