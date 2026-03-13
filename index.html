@@ -289,26 +289,6 @@
           <p>📱 扫码参与讨论</p>
           <img id="qr-image" class="qr-code" src="assets/qr-code.png" alt="二维码">
         </div>
-
-        <!-- 统计 -->
-        <div class="canvas-stats">
-          <div class="stat-item">
-            <span class="stat-label">已提交</span>
-            <span class="stat-value" id="submit-count">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">第一组</span>
-            <span class="stat-value" id="group1-count">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">第二组</span>
-            <span class="stat-value" id="group2-count">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">线上组</span>
-            <span class="stat-value" id="online-count">0</span>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -359,6 +339,13 @@
       <span id="currentScene">1</span> / <span id="totalScenes">9</span>
     </div>
     <button id="nextBtn" class="nav-btn">下一页 →</button>
+    <!-- 第七页统计栏 -->
+    <div class="canvas-stats-nav">
+      <div class="stat-item"><span class="stat-label">已提交</span><span class="stat-value" id="submit-count">0</span></div>
+      <div class="stat-item"><span class="stat-label">第一组</span><span class="stat-value" id="group1-count">0</span></div>
+      <div class="stat-item"><span class="stat-label">第二组</span><span class="stat-value" id="group2-count">0</span></div>
+      <div class="stat-item"><span class="stat-label">线上组</span><span class="stat-value" id="online-count">0</span></div>
+    </div>
   </div>
 
   <script>
@@ -417,6 +404,16 @@ class SceneManager {
     this.currentScene = index;
     this.updateNavButtons();
     document.getElementById('currentScene').textContent = index + 1;
+    
+    // 显示/隐藏统计栏（第七页显示）
+    const statsNav = document.querySelector('.canvas-stats-nav');
+    if (statsNav) {
+      if (index === 6) {
+        statsNav.classList.add('visible');
+      } else {
+        statsNav.classList.remove('visible');
+      }
+    }
     
     if (index === 6) this.renderCanvas();
   }

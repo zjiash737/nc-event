@@ -763,31 +763,32 @@ body {
   margin-bottom: 4px;
 }
 
-/* 底部统计栏 */
-.canvas-stats {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 32px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-  padding: 8px 20px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* 底部统计栏 - 导航栏内 */
+.canvas-stats-nav {
+  display: none;
+  gap: 20px;
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.canvas-stats .stat-item {
+.canvas-stats-nav.visible {
   display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
-.canvas-stats .stat-label {
-  font-size: 12px;
+.canvas-stats-nav .stat-item {
+  text-align: center;
+}
+
+.canvas-stats-nav .stat-label {
+  display: block;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2px;
 }
 
-.canvas-stats .stat-value {
+.canvas-stats-nav .stat-value {
+  display: block;
   font-size: 16px;
   font-weight: 600;
   color: var(--text-primary);
