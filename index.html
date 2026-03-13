@@ -362,14 +362,8 @@
   <script>
 /* ========================================
    Main Event Page - Scene Manager
-   Version: 2.0.0 - Cross-device sync
+   Version: 2.0.2 - Robust initialization
    ======================================== */
-
-// Supabase 配置
-const SUPABASE_URL = 'https://cvehqlibhvreoyzkvmij.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhxbGliaHZyZW95emt2bWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTU0MzUsImV4cCI6MjA4ODk3MTQzNX0.7A4Y2NY4-PcFIUZARGmue-ufbM74BZn_mlugcMBCE2s';
-
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 class SceneManager {
   constructor() {
@@ -377,23 +371,43 @@ class SceneManager {
     this.currentScene = 0;
     this.totalScenes = this.scenes.length;
     this.submissions = [];
+    this.supabase = null;
     
     this.init();
   }
   
   async init() {
+    // 核心功能优先 - 确保翻页可用
+    this.showScene(0);
     this.updateNavButtons();
     this.bindEvents();
-    await this.loadSubmissions();
-    this.subscribeToChanges();
-    this.showScene(0);
+    
+    // Supabase 可选 - 失败不影响翻页
+    this.initSupabase();
+  }
+  
+  initSupabase() {
+    if (!window.supabase || !window.supabase.createClient) {
+      console.warn('Supabase SDK not loaded, canvas sync disabled');
+      return;
+    }
+    try {
+      this.supabase = window.supabase.createClient(
+        'https://cvehqlibhvreoyzkvmij.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhxbGliaHZyZW95emt2bWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTU0MzUsImV4cCI6MjA4ODk3MTQzNX0.7A4Y2NY4-PcFIUZARGmue-ufbM74BZn_mlugcMBCE2s'
+      );
+      this.loadSubmissions();
+      this.subscribeToChanges();
+      console.log('Supabase initialized');
+    } catch (e) {
+      console.error('Supabase init error:', e);
+    }
   }
   
   bindEvents() {
     document.getElementById('prevBtn').addEventListener('click', () => this.prevScene());
     document.getElementById('nextBtn').addEventListener('click', () => this.nextScene());
     
-    // 键盘控制
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
@@ -404,32 +418,24 @@ class SceneManager {
       }
     });
     
-    // 五维画布小组筛选
     document.querySelectorAll('.group-tabs .tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         document.querySelectorAll('.group-tabs .tab').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
-        this.filterByGroup(e.target.dataset.group);
+        this.currentFilter = e.target.dataset.group;
+        this.renderCanvas();
       });
     });
   }
   
   showScene(index) {
-    // 隐藏所有场景
     this.scenes.forEach(scene => scene.classList.remove('active'));
-    
-    // 显示当前场景
     this.scenes[index].classList.add('active');
     this.currentScene = index;
-    
-    // 更新导航
     this.updateNavButtons();
     document.getElementById('currentScene').textContent = index + 1;
     
-    // 五维画布场景特殊处理
-    if (index === 6) { // 场景7是五维画布
-      this.renderCanvas();
-    }
+    if (index === 6) this.renderCanvas();
   }
   
   nextScene() {
@@ -449,19 +455,15 @@ class SceneManager {
     document.getElementById('nextBtn').disabled = this.currentScene === this.totalScenes - 1;
   }
   
-  // ========================================
-  // 五维画布功能 - Supabase 版本
-  // ========================================
-  
   async loadSubmissions() {
+    if (!this.supabase) return;
     try {
-      const { data, error } = await supabase
+      const { data, error } = await this.supabase
         .from('submissions')
         .select('*')
         .order('created_at', { ascending: true });
       
       if (error) throw error;
-      
       this.submissions = data.map(row => ({
         id: row.id,
         company: row.company,
@@ -469,78 +471,55 @@ class SceneManager {
         layers: row.layers,
         timestamp: new Date(row.created_at).getTime()
       }));
+      this.renderCanvas();
     } catch (error) {
-      console.error('Load submissions error:', error);
-      this.submissions = [];
+      console.error('Load error:', error);
     }
   }
   
   subscribeToChanges() {
-    // 订阅实时更新
-    supabase
+    if (!this.supabase) return;
+    this.supabase
       .channel('submissions-changes')
       .on('postgres_changes', 
         { event: 'INSERT', schema: 'public', table: 'submissions' },
         (payload) => {
-          console.log('New submission:', payload);
-          const newData = {
+          this.submissions.push({
             id: payload.new.id,
             company: payload.new.company,
             group: payload.new.group_name,
             layers: payload.new.layers,
             timestamp: new Date(payload.new.created_at).getTime()
-          };
-          this.submissions.push(newData);
+          });
           this.renderCanvas();
         }
       )
       .subscribe();
   }
   
-  filterByGroup(group) {
-    this.currentFilter = group;
-    this.renderCanvas();
-  }
-  
   renderCanvas() {
     const filter = this.currentFilter || 'all';
-    const filtered = filter === 'all' 
-      ? this.submissions 
-      : this.submissions.filter(s => s.group === filter);
+    const filtered = filter === 'all' ? this.submissions : this.submissions.filter(s => s.group === filter);
     
-    // 清空所有投票和讨论
     document.querySelectorAll('.option-votes').forEach(el => el.innerHTML = '');
     document.querySelectorAll('.discussion-list').forEach(el => el.innerHTML = '');
     
-    // 统计各组提交数
-    const counts = {
-      all: this.submissions.length,
-      group1: this.submissions.filter(s => s.group === 'group1').length,
-      group2: this.submissions.filter(s => s.group === 'group2').length,
-      online: this.submissions.filter(s => s.group === 'online').length
-    };
+    document.getElementById('submit-count').textContent = this.submissions.length;
+    document.getElementById('group1-count').textContent = this.submissions.filter(s => s.group === 'group1').length;
+    document.getElementById('group2-count').textContent = this.submissions.filter(s => s.group === 'group2').length;
+    document.getElementById('online-count').textContent = this.submissions.filter(s => s.group === 'online').length;
     
-    document.getElementById('submit-count').textContent = counts.all;
-    document.getElementById('group1-count').textContent = counts.group1;
-    document.getElementById('group2-count').textContent = counts.group2;
-    document.getElementById('online-count').textContent = counts.online;
-    
-    // 渲染每层的数据
     const layers = ['strategy', 'org', 'culture', 'tech', 'risk'];
-    
     layers.forEach(layer => {
-      // 统计该层的投票
       const votesByGroup = {};
       filtered.forEach(sub => {
         const vote = sub.layers?.[layer]?.vote;
-        const group = sub.group;
         if (vote) {
-          const key = `${vote}-${group}`;
+          const key = `${vote}-${sub.group}`;
           votesByGroup[key] = (votesByGroup[key] || 0) + 1;
         }
       });
       
-      // 渲染投票标签
       Object.entries(votesByGroup).forEach(([key, count]) => {
         const [option, group] = key.split('-');
         const votesEl = document.querySelector(`.canvas-layer[data-layer="${layer}"] .option[data-option="${option}"] .option-votes`);
@@ -554,7 +533,6 @@ class SceneManager {
         }
       });
       
-      // 渲染讨论要点
       const listEl = document.querySelector(`.canvas-layer[data-layer="${layer}"] .discussion-list`);
       if (listEl) {
         filtered.forEach(sub => {
@@ -562,10 +540,7 @@ class SceneManager {
           if (note) {
             const item = document.createElement('div');
             item.className = 'discussion-item';
-            item.innerHTML = `
-              <div class="company">${sub.company}</div>
-              <div>${note}</div>
-            `;
+            item.innerHTML = `<div class="company">${sub.company}</div><div>${note}</div>`;
             listEl.appendChild(item);
           }
         });
@@ -574,10 +549,7 @@ class SceneManager {
   }
 }
 
-// 初始化
-document.addEventListener('DOMContentLoaded', () => {
-  new SceneManager();
-});
+document.addEventListener('DOMContentLoaded', () => new SceneManager());
   </script>
 </body>
 </html>
