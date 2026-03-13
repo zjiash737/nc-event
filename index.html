@@ -358,11 +358,10 @@
     <button id="nextBtn" class="nav-btn">下一页 →</button>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
 /* ========================================
    Main Event Page - Scene Manager
-   Version: 2.0.2 - Robust initialization
+   Version: 3.0.0 - Feishu Bitable Backend
    ======================================== */
 
 class SceneManager {
@@ -371,37 +370,18 @@ class SceneManager {
     this.currentScene = 0;
     this.totalScenes = this.scenes.length;
     this.submissions = [];
-    this.supabase = null;
+    this.apiEndpoint = '/api/submissions';
+    this.refreshInterval = null;
     
     this.init();
   }
   
   async init() {
-    // 核心功能优先 - 确保翻页可用
     this.showScene(0);
     this.updateNavButtons();
     this.bindEvents();
-    
-    // Supabase 可选 - 失败不影响翻页
-    this.initSupabase();
-  }
-  
-  initSupabase() {
-    if (!window.supabase || !window.supabase.createClient) {
-      console.warn('Supabase SDK not loaded, canvas sync disabled');
-      return;
-    }
-    try {
-      this.supabase = window.supabase.createClient(
-        'https://cvehqlibhvreoyzkvmij.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhxbGliaHZyZW95emt2bWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTU0MzUsImV4cCI6MjA4ODk3MTQzNX0.7A4Y2NY4-PcFIUZARGmue-ufbM74BZn_mlugcMBCE2s'
-      );
-      this.loadSubmissions();
-      this.subscribeToChanges();
-      console.log('Supabase initialized');
-    } catch (e) {
-      console.error('Supabase init error:', e);
-    }
+    await this.loadSubmissions();
+    this.startAutoRefresh();
   }
   
   bindEvents() {
@@ -456,45 +436,29 @@ class SceneManager {
   }
   
   async loadSubmissions() {
-    if (!this.supabase) return;
     try {
-      const { data, error } = await this.supabase
-        .from('submissions')
-        .select('*')
-        .order('created_at', { ascending: true });
-      
-      if (error) throw error;
-      this.submissions = data.map(row => ({
-        id: row.id,
-        company: row.company,
-        group: row.group_name,
-        layers: row.layers,
-        timestamp: new Date(row.created_at).getTime()
-      }));
-      this.renderCanvas();
+      const res = await fetch(this.apiEndpoint);
+      const data = await res.json();
+      if (data.success) {
+        // 转换分组名称格式
+        this.submissions = data.data.map(item => ({
+          ...item,
+          group: item.group === '第一组' ? 'group1' : 
+                 item.group === '第二组' ? 'group2' : 
+                 item.group === '线上组' ? 'online' : item.group
+        }));
+        this.renderCanvas();
+      }
     } catch (error) {
       console.error('Load error:', error);
     }
   }
   
-  subscribeToChanges() {
-    if (!this.supabase) return;
-    this.supabase
-      .channel('submissions-changes')
-      .on('postgres_changes', 
-        { event: 'INSERT', schema: 'public', table: 'submissions' },
-        (payload) => {
-          this.submissions.push({
-            id: payload.new.id,
-            company: payload.new.company,
-            group: payload.new.group_name,
-            layers: payload.new.layers,
-            timestamp: new Date(payload.new.created_at).getTime()
-          });
-          this.renderCanvas();
-        }
-      )
-      .subscribe();
+  startAutoRefresh() {
+    // 每5秒刷新一次数据
+    this.refreshInterval = setInterval(() => {
+      this.loadSubmissions();
+    }, 5000);
   }
   
   renderCanvas() {
