@@ -352,13 +352,8 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Supabase 配置
-    const SUPABASE_URL = 'https://cvehqlibhvreoyzkvmij.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhxbGliaHZyZW95emt2bWlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTU0MzUsImV4cCI6MjA4ODk3MTQzNX0.7A4Y2NY4-PcFIUZARGmue-ufbM74BZn_mlugcMBCE2s';
-    
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // 层级数据
     const layersData = [
       {
         id: 'strategy',
@@ -547,19 +542,23 @@
       };
       
       try {
-        // 保存到 Supabase
-        const { data, error } = await supabase
-          .from('submissions')
-          .insert([submission]);
+        // 通过 API 提交
+        const response = await fetch('/api/submissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(submission)
+        });
         
-        if (error) throw error;
+        const result = await response.json();
+        
+        if (!result.success) throw new Error(result.error);
         
         // 显示成功
         stepContent.classList.add('hidden');
         stepSuccess.classList.remove('hidden');
       } catch (error) {
         console.error('Submit error:', error);
-        alert('提交失败，请重试');
+        alert('提交失败: ' + error.message);
       }
     }
 
