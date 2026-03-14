@@ -580,7 +580,7 @@ body {
 
 .header-right {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 20px;
 }
 
