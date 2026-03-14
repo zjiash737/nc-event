@@ -207,6 +207,20 @@ body {
   margin-top: var(--spacing-lg);
 }
 
+/* 整体logo图片 */
+.companies-full {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.companies-img {
+  max-width: 90%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
 .companies-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
