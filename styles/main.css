@@ -733,6 +733,7 @@ body {
   margin-bottom: 20px;
   flex: 0 0 auto;
   min-height: 0;
+  align-items: center;
 }
 
 .canvas-layer:hover {
