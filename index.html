@@ -429,11 +429,6 @@ class SceneManager {
     document.querySelectorAll('.option-votes').forEach(el => el.innerHTML = '');
     document.querySelectorAll('.discussion-list').forEach(el => el.innerHTML = '');
     
-    document.getElementById('submit-count').textContent = this.submissions.length;
-    document.getElementById('group1-count').textContent = this.submissions.filter(s => s.group === 'group1').length;
-    document.getElementById('group2-count').textContent = this.submissions.filter(s => s.group === 'group2').length;
-    document.getElementById('online-count').textContent = this.submissions.filter(s => s.group === 'online').length;
-    
     const layers = ['strategy', 'org', 'culture', 'tech', 'risk'];
     layers.forEach(layer => {
       const listEl = document.querySelector(`.canvas-layer[data-layer="${layer}"] .discussion-list`);
