@@ -186,6 +186,18 @@ body {
   position: relative;
 }
 
+/* 一行8个logo的布局 */
+.companies-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 10vh; /* 偏上位置 */
+  position: relative;
+}
+
 .companies-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
