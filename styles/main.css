@@ -194,8 +194,17 @@ body {
   gap: var(--spacing-md);
   max-width: 1200px;
   margin: 0 auto;
-  padding-top: 10vh; /* 偏上位置 */
   position: relative;
+}
+
+.companies-row.row1 {
+  padding-top: 12vh; /* 第一行偏上 */
+}
+
+.companies-row.row2 {
+  justify-content: center; /* 第二行4个居中 */
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-lg);
 }
 
 .companies-grid {
